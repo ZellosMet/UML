@@ -1,4 +1,4 @@
-#include<iostream>
+п»ї#include<iostream>
 #include<conio.h>
 #include<thread>
 using namespace  std::chrono_literals;
@@ -202,7 +202,7 @@ public:
 		do
 		{
 			key = 0;
-			if(_kbhit()) //Функция _kbhit() возвращает ненулевое значение пока клавиша не нажата
+			if(_kbhit()) //Р¤СѓРЅРєС†РёСЏ _kbhit() РІРѕР·РІСЂР°С‰Р°РµС‚ РЅРµРЅСѓР»РµРІРѕРµ Р·РЅР°С‡РµРЅРёРµ РїРѕРєР° РєР»Р°РІРёС€Р° РЅРµ РЅР°Р¶Р°С‚Р°
 			key = _getch();
 			switch(key)
 			{
@@ -211,19 +211,19 @@ public:
 				else get_in();			
 				break;
 
-			case 'F': case 'f':	//Заправить машину
+			case 'F': case 'f':	//Р—Р°РїСЂР°РІРёС‚СЊ РјР°С€РёРЅСѓ
 				if (driver_inside)
 				{
-					std::cout << "Для начала нужно выйти из машины" << std::endl;
+					std::cout << "Р”Р»СЏ РЅР°С‡Р°Р»Р° РЅСѓР¶РЅРѕ РІС‹Р№С‚Рё РёР· РјР°С€РёРЅС‹" << std::endl;
 					break;
 				}
 				double fuel;
-				std::cout << "Введите объём топлива: "; std::cin >> fuel;
+				std::cout << "Р’РІРµРґРёС‚Рµ РѕР±СЉС‘Рј С‚РѕРїР»РёРІР°: "; std::cin >> fuel;
 				std::this_thread::sleep_for(2s);
 				tank.fill(fuel);
 				break;
 
-			case 'I': case 'i': //Завести двигатель
+			case 'I': case 'i': //Р—Р°РІРµСЃС‚Рё РґРІРёРіР°С‚РµР»СЊ
 				if (engin.started()) stop();
 				else start();
 				break;
@@ -270,7 +270,7 @@ void main()
 	do
 	{
 		int fuel;
-		std::cout << "Введите уровень топлива: "; std::cin >> fuel;
+		std::cout << "Р’РІРµРґРёС‚Рµ СѓСЂРѕРІРµРЅСЊ С‚РѕРїР»РёРІР°: "; std::cin >> fuel;
 		tank.fill(fuel);
 		tank.info();
 	} while (true);
@@ -283,7 +283,7 @@ void main()
 	engine.info();
 
 #endif
-	std::cout << "Введите объём бака: ";
+	std::cout << "Р’РІРµРґРёС‚Рµ РѕР±СЉС‘Рј Р±Р°РєР°: ";
 	Car bmw(10, 40, 250);
 	bmw.control();
 
