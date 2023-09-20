@@ -311,6 +311,7 @@ public:
 			std::cout << "Speed:\t" << get_speed() << " km/h\n";
 			std::cout << "Fuel level:\t" << tank.get_fuel_level() << " liters\n";
 			if (tank.get_fuel_level() < 5 && engin.started()) std::cout << "LOW FUEL!" << std::endl;
+			std::cout << (get_parking() ? "Not parked" : "Parked") << std::endl;
 			std::cout << "Engine is " << (engin.started() ? "started" : "stoped") << std::endl;
 			std::this_thread::sleep_for(1s);
 		}
