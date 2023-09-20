@@ -229,6 +229,7 @@ public:
 				break;
 
 			case Escape:
+				stop();
 				get_out();
 				break;
 			}
