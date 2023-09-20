@@ -80,7 +80,11 @@ public:
 	{
 		return consumption_per_second;
 	}
-	void set_consumption_per_second(double consumption)
+	double set_consumption(double consumption)
+	{
+		this->consumption = consumption;
+	}
+	void set_consumption_per_second(int consumption)
 	{
 		consumption_per_second = consumption*3e-5;
 	}
@@ -108,6 +112,7 @@ public:
 	{
 		this->consumption = DEFAULT_CONSUMPTION;
 		set_consumption_per_second(consumption);
+		
 		is_started = false;
 		std::cout << "Engine is ready:\t" << this << std::endl;
 	}
@@ -133,6 +138,7 @@ class Car
 	int speed;
 	const int MAX_SPEED;
 	bool driver_inside;
+	bool parking;
 	struct Threads
 	{
 		std::thread panel_thread;
@@ -149,8 +155,12 @@ public:
 	{
 		return MAX_SPEED;
 	}
+	bool get_parking()const
+	{
+		return parking;
+	}
 
-	Car(double consumption, int volume, int max_speed):engin(consumption), tank(volume),
+	Car(double consumption, int volume, int max_speed):engin(consumption), tank(volume), speed(0),
 		MAX_SPEED
 		(
 			max_speed < MAX_SPPED_LOWER_LEVEL ? MAX_SPPED_LOWER_LEVEL:
@@ -158,6 +168,7 @@ public:
 			max_speed
 		)
 	{
+		parking = false;
 		driver_inside = false;
 		std::cout << "Your car is ready to go " << this << std::endl;
 	}
@@ -194,6 +205,39 @@ public:
 	{
 		engin.stop();
 		if (threads.engine_idle_thread.joinable())threads.engine_idle_thread.join();
+		speed = 0;
+	}
+
+	void drive()
+	{
+		parking = true;
+	}
+
+	void park()
+	{
+		parking = false;
+		speed = 0;
+	}
+
+	void speed_increase()
+	{
+		speed += 10;
+		if (speed > MAX_SPEED) speed = MAX_SPEED;
+	}
+	void speed_decrease()
+	{
+		speed -= 10;
+		if (speed < 0) speed = 0;
+	}
+
+	double drive_consumption(int speed)
+	{
+		if (speed == 0) return engin.get_consumption_per_second();
+		if (speed >= 1 && speed < 60) return 200e-5;
+		if (speed > 61 && speed < 100) return 140e-5;
+		if (speed > 101 && speed < 140) return 200e-5;
+		if (speed > 141 && speed < 200) return 250e-5;
+		if (speed > 201 && speed <= 250) return 300e-5;
 	}
 
 	void control()
@@ -228,6 +272,20 @@ public:
 				else start();
 				break;
 
+			case 'P': case 'p':
+				if (!get_parking() && engin.started()) drive();
+				else park();
+				break;
+
+			case 'W': case 'w':
+				if (get_parking() && engin.started()) speed_increase();
+				else park();
+				break;
+
+			case 'S': case 's':
+				if (get_parking() && engin.started()) speed_decrease();
+				break;
+
 			case Escape:
 				get_out();
 				break;
@@ -239,8 +297,10 @@ public:
 
 	void engine_idle()
 	{
-		while (engin.started() && tank.give_fuel(engin.get_consumption_per_second()))
+		while (engin.started() && tank.give_fuel(drive_consumption(speed)))
+		{
 			std::this_thread::sleep_for(1s);
+		}
 	}
 
 	void panel()
@@ -248,9 +308,11 @@ public:
 		while (driver_inside)
 		{
 			system("CLS");
+			std::cout << "Speed:\t" << get_speed() << " km/h\n";
 			std::cout << "Fuel level:\t" << tank.get_fuel_level() << " liters\n";
+			if (tank.get_fuel_level() < 5 && engin.started()) std::cout << "LOW FUEL!" << std::endl;
 			std::cout << "Engine is " << (engin.started() ? "started" : "stoped") << std::endl;
-			std::this_thread::sleep_for(500ms);
+			std::this_thread::sleep_for(1s);
 		}
 	}
 };
@@ -283,7 +345,7 @@ void main()
 	engine.info();
 
 #endif
-	std::cout << "Введите объём бака: ";
+
 	Car bmw(10, 40, 250);
 	bmw.control();
 
